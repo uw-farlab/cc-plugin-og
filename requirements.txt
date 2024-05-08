@@ -1,0 +1,5 @@
+compliance-checker>=4.0
+netCDF4
+pandas
+tzdata
+xarray
