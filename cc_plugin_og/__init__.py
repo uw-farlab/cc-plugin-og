@@ -16,7 +16,7 @@ class OGException(Exception):
 
 
 class OGChecker(BaseNCCheck):
-    _cc_spec = "OG"
+    _cc_spec = "og"
     _cc_url = "https://github.com/ioos/cc-plugin-og"
     _cc_author = "Rob Cermak <jcerma@uw.edu>"
     _cc_checker_version = __version__

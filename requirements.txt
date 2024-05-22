@@ -1,4 +1,4 @@
-compliance-checker>=4.0
+compliance-checker
 netCDF4
 pandas
 tzdata
