@@ -16,9 +16,10 @@ class OGException(Exception):
 
 
 class OGChecker(BaseNCCheck):
+
     _cc_spec = "og"
     _cc_url = "https://oceangliderscommunity.github.io/OG-format-user-manual/OG_Format.html"
-    _cc_author = "Rob Cermak <jcerma@uw.edu>"
+    _cc_author = "Rob Cermak, Callum Rollo"
     _cc_checker_version = __version__
 
     @classmethod
