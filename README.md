@@ -1,5 +1,7 @@
 # OG Compliance Checker Plugin
 
+[![Default Tests](https://github.com/uw-farlab/cc-plugin-og/actions/workflows/tests.yml/badge.svg)](https://github.com/uw-farlab/cc-plugin-og/actions/workflows/tests.yml)
+
 This is a checker for [OG](https://oceangliderscommunity.github.io/OG-format-user-manual/OG_Format.html) compliance
 
 It works with the [IOOS Compliance Checker](https://github.com/ioos/compliance-checker)

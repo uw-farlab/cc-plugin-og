@@ -53,5 +53,5 @@ class TestOGCheck(unittest.TestCase):
         Checks that a file with the proper lat and lon do work
         """
         dataset = self.get_dataset(STATIC_FILES["good_dataset"])
-        result = self.check.check_basic_requirements(dataset)
+        result = self.check.check_mandatory_variables(dataset)
         self.assertTrue(result.value)
