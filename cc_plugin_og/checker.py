@@ -1,4 +1,5 @@
 import re
+import numpy as np
 
 from compliance_checker import __version__
 from compliance_checker.base import BaseCheck, Result
@@ -19,16 +20,15 @@ class OGChecker(OGChecker):
     def __init__(self):
         pass
 
-    def check_manditory_variables(self, ds):
+    def check_mandatory_variables(self, ds):
         """
-        Check check for manditory variables.
+        Check check for mandatory variables.
         """
 
         level = BaseCheck.HIGH
         score = 0
-        out_of = 1
         messages = []
-        desc = "This checks basic requirements."
+        desc = "Check for mandatory variables."
 
         required_variables = [
             "LATITUDE_GPS",
@@ -53,6 +53,72 @@ class OGChecker(OGChecker):
             score += int(test)
             if not test:
                 messages.append(f"Variable {variable} is missing")
+
+        return self.make_result(level, score, out_of, desc, messages)
+
+
+    def check_attribute_names_are_lowercase(self, ds):
+        """
+        Check that all attribute names are lowercase.
+        """
+
+        level = BaseCheck.HIGH
+        score = 0
+        out_of = 0
+        messages = []
+        desc = "Check that all attribute names are lowercase."
+
+        # Check global attributes
+        attr_exceptions = ["Conventions", "featureType"]
+        for attr in ds.ncattrs():
+            if attr in attr_exceptions:
+                continue
+            out_of += 1
+            test = attr.lower()
+            if test != attr:
+                messages.append(f"Global attribute {attr} should be lowercase: {test}")
+            else:
+                score += 1
+
+        # Check variable attributes
+        # Skip [masked, masked_array] variable attributes
+        attr_exceptions = ["_FillValue"]
+        for variable in ds.variables:
+            for attr in ds.variables[variable].ncattrs():
+                if attr in attr_exceptions:
+                    continue
+                out_of += 1
+                try:
+                    test = attr.lower()
+                except Exception as inst:
+                    print("Exception: ", type(inst))
+                    breakpoint()
+
+                if test != attr:
+                    messages.append(f"Variable {variable} attribute {attr} should be lowercase: {test}")
+                else:
+                    score += 1
+
+        return self.make_result(level, score, out_of, desc, messages)
+
+
+    def check_variable_names_are_capitalized(self, ds):
+        """
+        Check that variable names are capitalized.
+        """
+
+        level = BaseCheck.HIGH
+        score = 0
+        out_of = len(ds.variables)
+        messages = []
+        desc = "Variable names should be capitalized."
+
+        for variable in ds.variables:
+            test = variable.upper()
+            if test != variable:
+                messages.append(f"Variable {variable} should be capitalized: {test}")
+            else:
+                score += 1
 
         return self.make_result(level, score, out_of, desc, messages)
 
