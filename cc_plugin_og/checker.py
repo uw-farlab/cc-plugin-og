@@ -1,8 +1,7 @@
 import re
-import numpy as np
 
 from compliance_checker import __version__
-from compliance_checker.base import BaseCheck, Result
+from compliance_checker.base import BaseCheck
 from compliance_checker.runner import ComplianceChecker, CheckSuite
 
 from cc_plugin_og import OGChecker
