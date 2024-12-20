@@ -121,3 +121,30 @@ class OGChecker(OGChecker):
 
         return self.make_result(level, score, out_of, desc, messages)
 
+    def check_sensors(self, ds):
+        """
+        Check that all sensors referred to in variables are present
+        """
+
+        level = BaseCheck.HIGH
+        score = 0
+        messages = []
+        sensors = []
+        desc = "sensors referred to in variables should be present"
+        for variable in ds.variables:
+            attrs = ds.variables[variable].ncattrs()
+            if 'sensor' in attrs:
+                sensors.append(ds.variables[variable].getncattr('sensor'))
+
+        sensors = set(sensors)
+        out_of = len(sensors)
+
+        for sensor in sensors:
+            test = sensor in ds.variables
+            if not test:
+                messages.append(f"Sensor variable {sensor} is missing")
+            else:
+                score += int(test)
+
+        return self.make_result(level, score, out_of, desc, messages)
+
