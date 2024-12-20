@@ -57,3 +57,9 @@ IOOS compliance checker available checker suites (code version):
  - ioos_sos:0.1 (3.1.1)
  - ioos_sos:latest (3.1.1)
  ```
+
+To run this check against an OG netcdf file:
+
+```bash
+$ compliance-checker -t og /path/to/file.nc
+```
