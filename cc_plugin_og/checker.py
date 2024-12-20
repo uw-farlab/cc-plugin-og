@@ -21,7 +21,7 @@ class OGChecker(OGChecker):
 
     def check_mandatory_variables(self, ds):
         """
-        Check check for mandatory variables.
+        Check for mandatory variables.
         """
 
         level = BaseCheck.HIGH
@@ -36,6 +36,7 @@ class OGChecker(OGChecker):
             "LATITUDE",
             "LONGITUDE",
             "TIME",
+            "DEPTH",
             "TRAJECTORY",
             "PLATFORM_MODEL",
             "WMO_IDENTIFIER",
