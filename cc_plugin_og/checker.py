@@ -121,3 +121,44 @@ class OGChecker(OGChecker):
 
         return self.make_result(level, score, out_of, desc, messages)
 
+    def check_mandatory_global_attributes(self, ds):
+        """
+        Check for mandatory global attributes.
+        """
+
+        level = BaseCheck.HIGH
+        score = 0
+        messages = []
+        desc = "Check for mandatory global attributes."
+
+        required_attributes = [
+            'title',
+            'platform',
+            'platform_vocabulary',
+            'id',
+            'contributor_name',
+            'comment',
+            'contributor_name',
+            'contributor_email',
+            'contributor_role',
+            'contributor_role_vocabulary',
+            'contributing_institutions',
+            'contributing_institutions_role',
+            'contributing_institutions_role_vocabulary',
+            'rtqc_method',
+            'start_date',
+            'date_created',
+            'featureType',
+            'featureType',
+            'Conventions',
+        ]
+
+        out_of = len(required_attributes)
+        for attribute in required_attributes:
+            test = attribute in ds.ncattrs()
+            score += int(test)
+            if not test:
+                messages.append(f"Global attribute {attribute} is missing")
+
+        return self.make_result(level, score, out_of, desc, messages)
+    
