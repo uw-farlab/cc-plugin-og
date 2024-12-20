@@ -143,31 +143,29 @@ class OGChecker(OGChecker):
 
         return self.make_result(level, score, out_of, desc, messages)
 
-    def check_coordinates(self, ds):
+    def check_sensors(self, ds):
         """
-        Check that variables have the correct coordinates.
+        Check that all sensors referred to in variables are present.
         """
 
         level = BaseCheck.HIGH
         score = 0
-        out_of = 0
         messages = []
-        correct_coords = ['DEPTH', 'LATITUDE', 'LONGITUDE', 'TIME']
-        desc = f"Coordinates should be {correct_coords}"
-
+        sensors = []
+        desc = "sensors referred to in variables should be present"
         for variable in ds.variables:
-            if variable in correct_coords:
-                # skip the coordinate variables themselves
-                continue
-            if not ds.variables[variable].dimensions:
-                # skip dimensionless variables
-                continue
-            out_of += 1
-            coords = ds.variables[variable].coordinates.split()
-            coords.sort()
-            if not coords == correct_coords:
-                messages.append(f"Variable {variable} should have coordinates: {correct_coords}")
+            attrs = ds.variables[variable].ncattrs()
+            if 'sensor' in attrs:
+                sensors.append(ds.variables[variable].getncattr('sensor'))
+
+        sensors = set(sensors)
+        out_of = len(sensors)
+
+        for sensor in sensors:
+            test = sensor in ds.variables
+            if not test:
+                messages.append(f"Sensor variable {sensor} is missing")
             else:
-                score += 1
+                score += int(test)
 
         return self.make_result(level, score, out_of, desc, messages)
