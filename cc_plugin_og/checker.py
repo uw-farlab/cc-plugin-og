@@ -19,6 +19,27 @@ class OGChecker(OGChecker):
     def __init__(self):
         pass
 
+    def check_dimensions(self, ds):
+        """
+        Check for mandatory dimensions
+        """
+        level = BaseCheck.HIGH
+        score = 0
+        messages = []
+        desc = "Check for mandatory dimensions."
+        required_dims = [
+            'N_MEASUREMENTS',
+        ]
+        out_of = len(required_dims)
+
+        for dimension in required_dims:
+            test = dimension in ds.dimensions.keys()
+            score += int(test)
+            if not test:
+                messages.append(f"Dimension {dimension} is missing")
+
+        return self.make_result(level, score, out_of, desc, messages)
+
     def check_mandatory_variables(self, ds):
         """
         Check check for mandatory variables.
