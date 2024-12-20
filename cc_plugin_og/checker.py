@@ -143,44 +143,31 @@ class OGChecker(OGChecker):
 
         return self.make_result(level, score, out_of, desc, messages)
 
-    def check_mandatory_global_attributes(self, ds):
+    def check_coordinates(self, ds):
         """
-        Check for mandatory global attributes.
+        Check that variables have the correct coordinates.
         """
 
         level = BaseCheck.HIGH
         score = 0
+        out_of = 0
         messages = []
-        desc = "Check for mandatory global attributes."
+        correct_coords = ['DEPTH', 'LATITUDE', 'LONGITUDE', 'TIME']
+        desc = f"Coordinates should be {correct_coords}"
 
-        required_attributes = [
-            'title',
-            'platform',
-            'platform_vocabulary',
-            'id',
-            'contributor_name',
-            'comment',
-            'contributor_name',
-            'contributor_email',
-            'contributor_role',
-            'contributor_role_vocabulary',
-            'contributing_institutions',
-            'contributing_institutions_role',
-            'contributing_institutions_role_vocabulary',
-            'rtqc_method',
-            'start_date',
-            'date_created',
-            'featureType',
-            'featureType',
-            'Conventions',
-        ]
-
-        out_of = len(required_attributes)
-        for attribute in required_attributes:
-            test = attribute in ds.ncattrs()
-            score += int(test)
-            if not test:
-                messages.append(f"Global attribute {attribute} is missing")
+        for variable in ds.variables:
+            if variable in correct_coords:
+                # skip the coordinate variables themselves
+                continue
+            if not ds.variables[variable].dimensions:
+                # skip dimensionless variables
+                continue
+            out_of += 1
+            coords = ds.variables[variable].coordinates.split()
+            coords.sort()
+            if not coords == correct_coords:
+                messages.append(f"Variable {variable} should have coordinates: {correct_coords}")
+            else:
+                score += 1
 
         return self.make_result(level, score, out_of, desc, messages)
-    
