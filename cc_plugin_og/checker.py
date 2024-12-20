@@ -121,3 +121,32 @@ class OGChecker(OGChecker):
 
         return self.make_result(level, score, out_of, desc, messages)
 
+    def check_coordinates(self, ds):
+        """
+        Check that variables have the correct coordinates
+        """
+
+        level = BaseCheck.HIGH
+        score = 0
+        out_of = 0
+        messages = []
+        correct_coords = ['DEPTH', 'LATITUDE', 'LONGITUDE', 'TIME']
+        desc = f"Coordinates should be {correct_coords}"
+
+        for variable in ds.variables:
+            if variable in correct_coords:
+                # skip the coordinate variables themselves
+                continue
+            if not ds.variables[variable].dimensions:
+                # skip dimensionless variables
+                continue
+            out_of += 1
+            coords = ds.variables[variable].coordinates.split()
+            coords.sort()
+            if not coords == correct_coords:
+                messages.append(f"Variable {variable} should have coordinates: {correct_coords}")
+            else:
+                score += 1
+
+        return self.make_result(level, score, out_of, desc, messages)
+
