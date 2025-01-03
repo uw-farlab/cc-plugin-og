@@ -19,9 +19,30 @@ class OGChecker(OGChecker):
     def __init__(self):
         pass
 
+    def check_dimensions(self, ds):
+        """
+        Check for mandatory dimensions
+        """
+        level = BaseCheck.HIGH
+        score = 0
+        messages = []
+        desc = "Check for mandatory dimensions."
+        required_dims = [
+            'N_MEASUREMENTS',
+        ]
+        out_of = len(required_dims)
+
+        for dimension in required_dims:
+            test = dimension in ds.dimensions.keys()
+            score += int(test)
+            if not test:
+                messages.append(f"Dimension {dimension} is missing")
+
+        return self.make_result(level, score, out_of, desc, messages)
+
     def check_mandatory_variables(self, ds):
         """
-        Check check for mandatory variables.
+        Check for mandatory variables.
         """
 
         level = BaseCheck.HIGH
@@ -36,6 +57,7 @@ class OGChecker(OGChecker):
             "LATITUDE",
             "LONGITUDE",
             "TIME",
+            "DEPTH",
             "TRAJECTORY",
             "PLATFORM_MODEL",
             "WMO_IDENTIFIER",
@@ -162,3 +184,29 @@ class OGChecker(OGChecker):
 
         return self.make_result(level, score, out_of, desc, messages)
     
+
+    def check_sensors(self, ds):
+        """
+        Check that all sensors referred to in variables are present.
+        """
+        level = BaseCheck.HIGH
+        score = 0
+        messages = []
+        sensors = []
+        desc = "sensors referred to in variables should be present"
+        for variable in ds.variables:
+            attrs = ds.variables[variable].ncattrs()
+            if 'sensor' in attrs:
+                sensors.append(ds.variables[variable].getncattr('sensor'))
+
+        sensors = set(sensors)
+        out_of = len(sensors)
+
+        for sensor in sensors:
+            test = sensor in ds.variables
+            if not test:
+                messages.append(f"Sensor variable {sensor} is missing")
+            else:
+                score += int(test)
+
+        return self.make_result(level, score, out_of, desc, messages)
