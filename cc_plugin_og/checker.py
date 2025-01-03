@@ -1,4 +1,5 @@
 import re
+import datetime
 
 from compliance_checker import __version__
 from compliance_checker.base import BaseCheck
@@ -208,5 +209,30 @@ class OGChecker(OGChecker):
                 messages.append(f"Sensor variable {sensor} is missing")
             else:
                 score += int(test)
+
+        return self.make_result(level, score, out_of, desc, messages)
+
+
+    def check_dates(self, ds):
+        """
+        Check that all dates in metadata are correctly formatted
+        """
+        level = BaseCheck.HIGH
+        score = 0
+        messages = []
+        desc = "dates should be formatted as YYYYmmddTHHMMss"
+        
+        dates_to_check = ["start_date", "date_created", "time_coverage_start", "time_coverage_end"]
+        attrs = ds.ncattrs()
+        dates = set(dates_to_check).intersection(attrs)
+        out_of = len(dates)
+
+        for date_name in dates:
+            date_str = ds.getncattr(date_name)
+            try:
+                datetime.datetime.strptime(date_str, "%Y%m%dT%H%M%S")
+                score += 1
+            except ValueError:
+                messages.append(f"Date {date_name}: {date_str} is not formatted as YYYYmmddTHHMMss")
 
         return self.make_result(level, score, out_of, desc, messages)
