@@ -28,10 +28,21 @@ For a brief overview of the attributes the OG Checker runs through, check [here]
 
 #### Clone this project
 
+Download code and install requirements:
 ```bash
-$ git clone git@github.com:ioos/cc-plugin-og.git
-$ cd cc-plugin-og
-$ python setup.py install
+git clone https://github.com/uw-farlab/cc-plugin-og.git
+cd cc-plugin-og
+python -m pip install -r requirements.txt
+```
+
+Install for general use:
+```bash
+python -m pip install .
+```
+
+Install in an editable method allowing code changes in the source tree to take immediate effect:
+```bash
+python -m pip install -e . 
 ```
 
 #### Tests should now show up when you run compliance checker
