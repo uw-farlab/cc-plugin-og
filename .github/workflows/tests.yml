@@ -17,7 +17,7 @@ jobs:
         shell: bash -l {0}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Setup Micromamba ${{ matrix.python-version }}
       uses: mamba-org/setup-micromamba@v2
