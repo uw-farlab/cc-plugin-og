@@ -159,7 +159,6 @@ class OGChecker(OGChecker):
             'platform',
             'platform_vocabulary',
             'id',
-            'contributor_name',
             'comment',
             'contributor_name',
             'contributor_email',
@@ -171,7 +170,6 @@ class OGChecker(OGChecker):
             'rtqc_method',
             'start_date',
             'date_created',
-            'featureType',
             'featureType',
             'Conventions',
         ]
