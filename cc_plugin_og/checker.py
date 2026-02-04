@@ -1,6 +1,6 @@
 import re
 import datetime
-
+import requests
 from compliance_checker import __version__
 from compliance_checker.base import BaseCheck
 from compliance_checker.runner import ComplianceChecker, CheckSuite
@@ -234,5 +234,47 @@ class OGChecker(OGChecker):
                 score += 1
             except ValueError:
                 messages.append(f"Date {date_name}: {date_str} is not formatted as YYYYmmddTHHMMss")
+
+        return self.make_result(level, score, out_of, desc, messages)
+
+
+    def check_variables_og1_url(self, ds):
+        """
+        Check that variable names are capitalized.
+        """
+        og1_collection = requests.get(
+            f'https://vocab.nerc.ac.uk/collection/OG1/current/?_profile=nvs&_mediatype=application/ld+json').json()
+        graph = og1_collection['@graph']
+        concepts = graph[:-1]
+        og1_uri_list = [concept['@id'] for concept in concepts]
+        level = BaseCheck.HIGH
+        score = 0
+        out_of = len(ds.variables)
+        messages = []
+        desc = "Variables should have valid vocabulary URIs"
+
+        for var_name in ds.variables:
+            variable = ds.variables[var_name]
+            if variable.dimensions != ('N_MEASUREMENTS',) or var_name[-3:] == '_QC':
+                score += 1
+                continue
+            attrs = variable.ncattrs()
+            if 'vocabulary' not in attrs:
+                messages.append(f"variable {var_name} should have attribute 'vocabulary', value is a URI from the OG1 collection")
+                continue
+            uri = variable.getncattr('vocabulary')
+            if 'https' in uri:
+                messages.append(f"variable {var_name} vocabulary {uri} contains https. Vocabulary URIs use http")
+                continue
+            if uri[-1] != '/':
+                messages.append(f"variable {var_name} vocabulary {uri} should end with a forward slash '/'")
+                continue
+            if uri not in og1_uri_list:
+                messages.append(f"variable {var_name} vocabulary {uri} not found in NERC OG1 collection")
+                continue
+            if 'long_name' not in attrs:
+                messages.append(f"variable {var_name} should have attribute 'long_name'")
+                continue
+            score += 1
 
         return self.make_result(level, score, out_of, desc, messages)
